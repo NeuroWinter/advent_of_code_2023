@@ -6,14 +6,11 @@ from itertools import islice
 
 def _extract_ints(list_of_strings: list[str]) -> list[int]:
     """
-
+    Extract the first and last digit from each line and return as a list of ints.
     """
     rtn = []
     for line in list_of_strings:
-        # print(line)
         list_of_found_ints = re.findall('\d', line)
-        # print(line)
-        # print(list_of_found_ints)
         if len(list_of_found_ints) == 0:
             continue
         if len(list_of_found_ints)  == 1:
@@ -54,95 +51,6 @@ def consume(iterator, n=None):
     else:
         # advance to the empty slice starting at position n
         next(islice(iterator, n, n), None)
-
-def convert_string(in_str: str) -> str:
-    """
-    If the input string contains a word of a number then convert it to a num.
-    """
-
-    rtn_str = ''
-    # we need to find the first real number so I am thinking we need to scan
-    # though the string and almost make a graph.
-    index_letter_tuple_list = enumerate(in_str)
-    for index, letter in index_letter_tuple_list:
-        if letter in ['o', 't', 'f', 's', 'e', 'n']:
-            # we need to check to see if there is enough values after the index
-            if len(in_str) < index + 2:
-                rtn_str += letter
-                continue
-            if len(in_str) < index + 3:
-                rtn_str += letter
-                continue
-            if len(in_str) < index + 4:
-                rtn_str += letter
-                continue
-            # now lets look for the next valid number char
-            if letter == 'o' and \
-               in_str[index+1] == 'n' and \
-               in_str[index+2] == 'e':
-                rtn_str += '1'
-                consume(index_letter_tuple_list, n=2)
-            elif letter == 't':
-                if in_str[index+1] == 'w' and \
-                   in_str[index+2] == 'o':
-                    rtn_str += '2'
-                    consume(index_letter_tuple_list, 2)
-                elif in_str[index+1] == 'h' and \
-                     in_str[index+2] == 'r' and \
-                     in_str[index+3] == 'e' and \
-                     in_str[index+4] == 'e':
-                    rtn_str += '3'
-                    consume(index_letter_tuple_list, 4)
-                else:
-                    rtn_str += letter
-            elif letter == 'f':
-                if in_str[index+1] == 'o' and \
-                   in_str[index+2] == 'u' and \
-                   in_str[index+3] == 'r':
-                    rtn_str += '4'
-                    consume(index_letter_tuple_list, 3)
-                elif in_str[index+1] == 'i' and \
-                     in_str[index+2] == 'v' and \
-                     in_str[index+3] == 'e':
-                    rtn_str += '5'
-                    consume(index_letter_tuple_list, 3)
-                else:
-                    rtn_str += letter
-            elif letter == 's':
-                if in_str[index+1] == 'i' and \
-                   in_str[index+2] == 'x':
-                    rtn_str += '6'
-                    consume(index_letter_tuple_list, 2)
-                elif in_str[index+1] == 'e' and \
-                     in_str[index+2] == 'v' and \
-                     in_str[index+3] == 'e' and \
-                     in_str[index+4] == 'n':
-                    rtn_str += '7'
-                    consume(index_letter_tuple_list, 4)
-                else:
-                    rtn_str += letter
-            elif letter == 'e' and \
-                 in_str[index+1] == 'i' and \
-                 in_str[index+2] == 'g' and \
-                 in_str[index+3] == 'h' and \
-                 in_str[index+4] == 't':
-                rtn_str += '8'
-                consume(index_letter_tuple_list, 4)
-            elif letter == 'n' and \
-                 in_str[index+1] == 'i' and \
-                 in_str[index+2] == 'n' and \
-                 in_str[index+3] == 'e':
-                rtn_str += '9'
-                consume(index_letter_tuple_list, 3)
-            else:
-                rtn_str += letter
-        else:
-            rtn_str += letter
-    # print("*"*80)
-    # print(f"in_str: {in_str}")
-    # print(f"rtn_str: {rtn_str}")
-    # print("*"*80)
-    return rtn_str
 
 def does_contain_number(input_str: str) -> bool:
     """
@@ -189,13 +97,6 @@ def convert_string_but_better(in_str: str) -> str:
     # then replace it with that number and add that to the rtn
     # if it does not then increase the window.
 
-    # start with a window that starts that the first index of the list
-    # and ends at the second index of the list, then if that does not
-    # contain a number then increase the window by one and try again.
-    # if it does contain a number then replace that word with the number
-    # and add that to the rtn string. Then increase the starting point of the
-    # window by the length of the word that was replaced and reset the window
-    # size to 1.
     rtn_str = ''
     window_start = 0
     window_end = 1
@@ -209,6 +110,8 @@ def convert_string_but_better(in_str: str) -> str:
                 if key in window:
                     print(f"replacing {key} with {helper_dict[key]}")
                     window        = window.replace(key, helper_dict[key])
+                    # This is only place I can think of that will change the
+                    # output...
                     window_start += len(window) + len(key) - 2
             rtn_str += window
             window_end = window_start + 1
@@ -234,10 +137,6 @@ def challenge_two(list_of_strings: list[str]) -> int:
 
 
 test_input = [
-#    '1abc2',
-#    'pqr3stu8vwx',
-#    'a1b2c3d4e5f',
-#    'treb7uchet'
     'two1nine',
     'eightwothree',
     'abcone2threexyz',
@@ -245,14 +144,6 @@ test_input = [
     '4nineeightseven2',
     'zoneight234',
     '7pqrstsixteen',
-    # 'eighthree'
-    # '5qt1',
-    # '5qf2',
-    # '5qs3',
-    # '5qel',
-    # '5qnl',
-    # '12twone1',
-    # 'onee1twoo2threee3fourr4fivee5sixx6sevenn7eightt8ninee9'
 ]
 
 
